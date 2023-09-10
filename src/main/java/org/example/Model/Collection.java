@@ -2,6 +2,7 @@ package org.example.Model;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -15,7 +16,8 @@ public class Collection {
 
     private ArrayList<Livre> livres ;
 
-    public Collection(String titre, int nbrLivre, String isbn, String auteur) {
+    public Collection(Long id ,String titre, int nbrLivre, String isbn, String auteur) {
+        Id = id;
         Titre = titre;
         NbrLivre = nbrLivre;
         Isbn = isbn;
@@ -23,6 +25,9 @@ public class Collection {
     }
 
     public Collection(){}
+    public Collection(String isbn){
+        Isbn = isbn;
+    }
     public long getId() {
         return Id;
     }
@@ -63,35 +68,17 @@ public class Collection {
         Auteur = auteur;
     }
 
-    public boolean addCollection(Connection conn, Scanner scanner) {
-        // Get user input for collection details
-        System.out.print("Enter ISBN: ");
-        String isbn = scanner.next();
-        System.out.print("Enter Title: ");
-        String title = scanner.next();
-        System.out.print("Enter Author: ");
-        String author = scanner.next();
-        System.out.print("Enter Total Number of Books: ");
-        int totalBooks = scanner.nextInt();
-        System.out.println("Provided ISBN: " + isbn);
 
-            String insertCollectionQuery = "INSERT INTO Collection (isbn, title, auteur, totale) VALUES (?, ?, ?, ?)";
-            try (PreparedStatement pstmt = conn.prepareStatement(insertCollectionQuery)) {
-                pstmt.setString(1, isbn);
-                pstmt.setString(2, title);
-                pstmt.setString(3, author);
-                pstmt.setInt(4, totalBooks);
+    public Collection mapData(ResultSet resultSet) throws SQLException {
 
-                int rowsInserted = pstmt.executeUpdate();
-                return rowsInserted > 0;
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return false;
-            }
+        this.Auteur = resultSet.getString("auteur");
+        this.Isbn = resultSet.getString("isbn");
+        this.Titre = resultSet.getString("title");
+        this.NbrLivre = resultSet.getInt("totale");
+
+        return this;
+    }
 
     }
 
 
-
-
-}

@@ -2,7 +2,11 @@ package org.example.Model;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.InputMismatchException;
+import java.util.List;
+import java.util.Scanner;
 
 public class Livre {
     private long Id;
@@ -11,7 +15,7 @@ public class Livre {
 
     private Status status;
 
-
+    private List<Emprunt> empruntList;
     public Status getStatus() {
         return status;
     }
@@ -20,12 +24,14 @@ public class Livre {
         this.
                 status = status;
     }
-    public Livre(String numLivre, Collection collection, Status status) {
+    public Livre(Long Id ,String numLivre, Collection collection, Status status) {
+        this.Id = Id;
         this.numLivre = numLivre;
         this.collection = collection;
         this.status = status;
     }
 
+    public Livre(){};
     public long getId() {
         return Id;
     }
@@ -50,22 +56,24 @@ public class Livre {
         this.collection = collection;
     }
 
-    // Add a method to add a book to the database
-    public boolean addBook(Connection conn) {
+    public List<Emprunt> getEmpruntList() {
+        return empruntList;
+    }
 
+    public void setEmpruntList(List<Emprunt> empruntList) {
+        this.empruntList = empruntList;
+    }
 
-        String insertBookQuery = "INSERT INTO book (numeroinventair, status_id, collection_id) VALUES (?, ?, ?)";
-        try (PreparedStatement pstmt = conn.prepareStatement(insertBookQuery)) {
-            pstmt.setString(1, numLivre);
-            pstmt.setLong(2, status.getId());
-            pstmt.setLong(3, collection.getId()); // Use the ID of the associated collection
+    public Livre mapData(ResultSet resultSet) throws SQLException {
 
-            int rowsInserted = pstmt.executeUpdate();
-            return rowsInserted > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+        Collection collection=new Collection();
+        Status status=new Status();
+        this.numLivre = resultSet.getString("numeroInventair");
+        this.collection.setId(resultSet.getLong("collection_id"));
+        this.collection=collection.mapData(resultSet);
+        this.status.setId(resultSet.getLong("status_id"));
+        this.status=status.mapData(resultSet);
+        return this;
     }
 
 

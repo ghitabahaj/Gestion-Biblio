@@ -6,13 +6,14 @@ import org.example.Model.User;
 import org.example.Repository.UserRepository;
 import org.example.Service.UserService;
 
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         DbFunctions db = new DbFunctions();
 
-        UserRepository userRepository = new UserRepository(db.connect_to_db("bibliotheque","postgres","password"));
+        UserRepository userRepository = new UserRepository(db.connect_to_db());
 
         UserService userService = new UserService(userRepository);
 
