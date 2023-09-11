@@ -45,7 +45,7 @@ public class EmprunteurController {
         System.out.println("-------------------------------------------------------------");
     }
 
-    public String update() throws SQLException {
+    public void update() throws SQLException {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter MemberShip number: ");
         String membership = scanner.next();
@@ -57,9 +57,9 @@ public class EmprunteurController {
             System.out.print("Enter Phone: ");
             String phone = scanner.next();
             Emprunteur emprunteur = new Emprunteur(fullName, email, phone,membership);
-            return emprunteurService.update(emprunteur);
+            System.out.println(emprunteurService.update(emprunteur));
         }
-        return "this emprunteur doesn't exists";
+
     }
 
     public String delete() throws SQLException {

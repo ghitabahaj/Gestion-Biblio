@@ -1,5 +1,7 @@
 package org.example.Model;
 
+import org.example.Helpers.DbFunctions;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Collection {
+    DbFunctions database = new DbFunctions();
+    Connection connection = database.connect_to_db();
     private long Id;
     private String Titre;
     private int NbrLivre;
@@ -28,6 +32,19 @@ public class Collection {
         Titre = titre;
         Isbn = isbn;
         Auteur = auteur;
+    }
+    public void get(){
+        String query = "SELECT *  FROM collection WHERE isbn = ? ";
+        try {
+            PreparedStatement prst = connection.prepareStatement(query);
+            prst.setString(1,this.Isbn);
+            ResultSet resultSet = prst.executeQuery();
+            while (resultSet.next()){
+                this.Id = resultSet.getLong("id");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
     public Collection(){}
     public Collection(String isbn){

@@ -36,6 +36,7 @@ public class CollectionRepository {
         }
 
     }
+
     public boolean addCollection() {
         scanner = new Scanner(System.in);
         System.out.print("Enter ISBN: ");
@@ -126,6 +127,7 @@ public class CollectionRepository {
 
     public boolean updateCollection(String isbn) {
 
+            scanner = new Scanner(System.in);
             System.out.println("Provide updated information for the collection:");
             System.out.print("Enter new title: ");
             String newTitle = scanner.next();
@@ -144,10 +146,8 @@ public class CollectionRepository {
 
                 int rowsUpdated = pstmt.executeUpdate();
                 if (rowsUpdated > 0) {
-                    System.out.println("Collection updated successfully.");
                     return true;
                 } else {
-                    System.out.println("Failed to update the collection.");
                     return false;
                 }
             } catch (SQLException e) {

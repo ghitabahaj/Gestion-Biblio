@@ -6,14 +6,14 @@ public class LivreService {
 
   LivreRepository livreRepository = new LivreRepository();
 
-    public boolean AddBook(String num){
+    public String AddBook(String num){
         if(livreRepository.checkIfBookExistsByNUM(num) ){
             System.out.println("Livre avec ce Numero d'inventaire " + num + " existe déja!");
-            return false;
+            return "Try Again";
 
         }else{
             livreRepository.addBook(num);
-            return true;
+            return "Book Added Successufully";
         }
     }
     public String DisplayBook(String title){
@@ -25,8 +25,14 @@ public class LivreService {
          }
     }
 
-    public void DisplayAllBooks(){
-        livreRepository.displayAllBooks();
+    public String DisplayAllBooks(){
+        if(livreRepository.CountLivres()>0){
+            livreRepository.displayAllBooks();
+            return "Done";
+        }else {
+            return "There's no Book";
+        }
+
     }
 
 
@@ -39,8 +45,13 @@ public class LivreService {
     }
 
 
-    public void DisplayBooksBorrowed(){
-        livreRepository.displayBorrowedBooksInfo();
+    public String DisplayBooksBorrowed(){
+       if(livreRepository.CountBorrowedBooks()>0){
+           livreRepository.displayBorrowedBooksInfo();
+           return "done";
+       }else{
+           return "There s no Borrowed Books";
+       }
     }
 
 }

@@ -123,6 +123,7 @@ public class LivreRepository {
 
     public boolean addBook(String numeroLivre) {
         scanner = new Scanner(System.in);
+        System.out.println(numeroLivre);
         try {
             // Get status_id based on status label
             System.out.print("Entrez le statut du livre: ");
@@ -156,7 +157,7 @@ public class LivreRepository {
                 // Create the new collection
                 Collection newCollection = new Collection(newCollectionTitle, isbn, newCollectionAuthor);
                 collectionRepository.AjouterCollection(newCollection);
-
+                newCollection.get();
                 // Set the created collection as the current collection
                 collectionA = newCollection;
             }
@@ -345,7 +346,40 @@ public class LivreRepository {
         }
     }
 
+ public int CountLivres(){
 
+     String countLivreQuery = "SELECT COUNT(*) FROM livre";
+
+     try (PreparedStatement pstmt = connection.prepareStatement(countLivreQuery)) {
+         ResultSet resultSet = pstmt.executeQuery();
+
+         if (resultSet.next()) {
+             int bookCount = resultSet.getInt(1);
+             return bookCount;
+         }
+     } catch (SQLException e) {
+         e.printStackTrace();
+     }
+
+     return -1;
+
+ }
+
+ public int CountBorrowedBooks(){
+        String CountBorrowed = "SELECT COUNT(*) FROM livreemprunt";
+     try (PreparedStatement pstmt = connection.prepareStatement(CountBorrowed)) {
+         ResultSet resultSet = pstmt.executeQuery();
+
+         if (resultSet.next()) {
+             int bookBorrowed = resultSet.getInt(1);
+             return bookBorrowed;
+         }
+     } catch (SQLException e) {
+         e.printStackTrace();
+     }
+
+     return -1;
+ }
 
 
 

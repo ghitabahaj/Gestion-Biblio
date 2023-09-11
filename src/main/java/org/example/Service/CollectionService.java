@@ -13,9 +13,9 @@ public class CollectionService {
 
     private Collection collection = new Collection();
 
-    public void DisplayCollectionByIsbn(String isbn) throws SQLException {
+    public String DisplayCollectionByIsbn(String isbn) throws SQLException {
         if(collectionRepository.collectionExists(isbn) == 0){
-            System.out.println("Collection with ISBN " + isbn + " does not exist.");
+         return "Collection with ISBN " + isbn + " does not exist.";
         }else{
             collection = collectionRepository.getCollectionByIsbn(isbn);
             System.out.println("Collection Details:");
@@ -25,6 +25,8 @@ public class CollectionService {
             System.out.println("| Author            | " + collection.getAuteur());
             System.out.println("| Total Books       | " + collection.getNbrLivre());
             System.out.println("+-------------------+-----------------+");
+
+            return "Done";
         }
     }
 
@@ -41,7 +43,7 @@ public class CollectionService {
              collectionRepository.updateCollection(isbn);
              return "Collection updated successufully";
         }else {
-            return "ERROR";
+            return "Failed to update the collection,or collection does not exists";
         }
     }
 

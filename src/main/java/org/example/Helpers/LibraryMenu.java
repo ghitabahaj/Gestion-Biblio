@@ -85,9 +85,7 @@ public class LibraryMenu {
                         break;
                     case 4:
                         System.out.print("***** L'affichage d'un livre à partir de son titre*****\n");
-                        System.out.println("\n Veuillez entrer le titre de livre que vous voulez rechercher?");
-                        String title = scanner.next();
-//                       livreService.DisplayBook(title);
+                        livreController.DisplayByTitle();
 
                         break;
                     case 5:
@@ -95,7 +93,7 @@ public class LibraryMenu {
                         break;
                     case 6:
                         System.out.print("***** L'affichage e tout les livres Disponibles *****\n");
-                        //   livreService.DisplayAllBooks();
+                        livreController.DisplayAllBooks();
                         break;
                /*     case 7:
                         System.out.print("***** L'ajout d'une nouvelle collection *****\n");
@@ -128,7 +126,7 @@ public class LibraryMenu {
                         break;
                     case 14:
                         System.out.print("---------- Affichage Des Livres Empruntés avec Les informations des Emprunteurs ----------\n ");
-                        //  livreService.DisplayBooksBorrowed();
+                         livreController.DisplayBorrowedBooks();
                         break;
 //                    case 15:
 //                        System.out.print("--------- Ajout d'un nouveau Status --------- \n");

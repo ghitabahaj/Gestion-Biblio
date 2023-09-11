@@ -30,7 +30,7 @@ public class CollectionController {
 
         System.out.println("Veuillez entrer l'Isbn de collection que vous voulez afficher:");
         String isbn = scanner.next();
-        collectionService.DisplayCollectionByIsbn(isbn);
+        System.out.println( collectionService.DisplayCollectionByIsbn(isbn));
 
     }
 
