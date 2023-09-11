@@ -125,25 +125,43 @@ public class LivreRepository {
         scanner = new Scanner(System.in);
         try {
             // Get status_id based on status label
-            System.out.print("Entrez le status de livre: ");
+            System.out.print("Entrez le statut du livre: ");
             String statusLabel = scanner.next();
             status = new Status(statusLabel);
 
             while (statusRepository.StatusExists(statusLabel) == 0) {
-                System.out.println("Ce Status " + statusLabel + " n'existe pas . Veuillez réssayer!\n");
-                System.out.print("Entrez le status de livre: ");
+                System.out.println("Ce statut " + statusLabel + " n'existe pas. Veuillez réessayer!\n");
+                System.out.print("Entrez le statut du livre: ");
                 statusLabel = scanner.next();
                 status = new Status(statusLabel);
             }
 
             long statusId = statusRepository.getStatusIdByLabel(statusLabel);
 
-
-            System.out.print("Entrez la collection de livre (ISBN): ");
+            // Step 1: Get the ISBN
+            System.out.print("Entrez l'ISBN du livre: ");
             String isbn = scanner.next();
-            collection = new Collection(isbn);
             Collection collectionA = collectionRepository.getCollectionByIsbn(isbn);
 
+            if (collectionA == null) {
+                // Step 2: If collection with ISBN does not exist, create a new collection
+                System.out.println("La collection avec l'ISBN " + isbn + " n'existe pas.");
+
+                // Prompt the user for title and author of the new collection
+                System.out.print("Entrez le titre de la nouvelle collection: ");
+                String newCollectionTitle = scanner.next();
+                System.out.print("Entrez l'auteur de la nouvelle collection: ");
+                String newCollectionAuthor = scanner.next();
+
+                // Create the new collection
+                Collection newCollection = new Collection(newCollectionTitle, isbn, newCollectionAuthor);
+                collectionRepository.AjouterCollection(newCollection);
+
+                // Set the created collection as the current collection
+                collectionA = newCollection;
+            }
+
+            // Step 3: Insert the book into the database with the selected collection
             String insertBookQuery = "INSERT INTO livre (numeroinventair, status_id, collection_id) VALUES (?, ?, ?)";
             try (PreparedStatement pstmt = connection.prepareStatement(insertBookQuery)) {
                 pstmt.setString(1, numeroLivre);
@@ -157,7 +175,7 @@ public class LivreRepository {
                 return false;
             }
         } catch (InputMismatchException e) {
-            System.out.println("Invalid input. Please enter valid data.");
+            System.out.println("Entrée invalide. Veuillez entrer des données valides.");
             scanner.next();
             return false;
         } catch (SQLException e) {
@@ -167,15 +185,20 @@ public class LivreRepository {
 
 
 
+
     public void displayAllBooks() {
         String query = "SELECT livre.*, collection.title AS collection_title, " +
                 "collection.auteur AS collection_author, collection.isbn AS collection_isbn , status.label AS status_label " +
                 "FROM livre " +
                 "INNER JOIN collection ON livre.collection_id = collection.id " +
-                "INNER JOIN status ON livre.status_id = status.id WHERE status.label = 'disponible' OR status.label = 'emprunte'";
+                "INNER JOIN status ON livre.status_id = status.id WHERE status.label = 'Disponible' ";
 
         try (PreparedStatement pstmt = connection.prepareStatement(query);
              ResultSet resultSet = pstmt.executeQuery()) {
+            System.out.println("+--------------+------------------+------------------+------------------+------------------+------------------+");
+            System.out.println("| Book ID      | Book ISBN        | Inventory Number | Title            | Author           | Status           |");
+            System.out.println("+--------------+------------------+------------------+------------------+------------------+------------------+");
+
             while (resultSet.next()) {
                 long id = resultSet.getLong("id");
                 String numLivre = resultSet.getString("numeroinventair");
@@ -185,13 +208,10 @@ public class LivreRepository {
                 String status = resultSet.getString("status_label");
 
                 // Print book information
-                System.out.println("Book ID: " + id);
-                System.out.println("Book ISBN: " + isbn);
-                System.out.println("Inventory Number: " + numLivre);
-                System.out.println("Title: " + title);
-                System.out.println("Author: " + author);
-                System.out.println("Status: " + status);
-                System.out.println("------------------------------\n");
+
+                System.out.printf("| %-12d | %-16s | %-16s | %-16s | %-16s | %-16s |\n", id, isbn, numLivre, title, author, status);
+
+                System.out.println("+--------------+------------------+------------------+------------------+------------------+------------------+");
             }
         } catch (SQLException e) {
             e.printStackTrace();

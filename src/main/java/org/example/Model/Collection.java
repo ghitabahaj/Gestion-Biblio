@@ -23,7 +23,12 @@ public class Collection {
         Isbn = isbn;
         Auteur = auteur;
     }
+    public Collection(String titre, String isbn, String auteur) {
 
+        Titre = titre;
+        Isbn = isbn;
+        Auteur = auteur;
+    }
     public Collection(){}
     public Collection(String isbn){
         Isbn = isbn;

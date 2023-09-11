@@ -52,10 +52,10 @@ public class EmpruntRepository {
 
 
 
-    public boolean update(Boolean returne,Long id)throws SQLException{
+    public boolean update(Long id)throws SQLException{
         String UpdateEmpruntQuery="Update Emprunt Set returne=? Where id=?";
         try(PreparedStatement preparedStatement = connection.prepareStatement(UpdateEmpruntQuery)){
-            preparedStatement.setBoolean(1,returne);
+            preparedStatement.setBoolean(1,true);
             preparedStatement.setLong(2,id);
 
             int rowDeleted=preparedStatement.executeUpdate();
@@ -127,6 +127,47 @@ public class EmpruntRepository {
         return null;
     }
 
+    public Emprunt findEmpruntLivre(Livre livre){
+        String sql="Select e.* from emprunt e join livreemprunt le on e.id=le.emprunt_id join livre l on le.livre_id=l.id where l.id=?";
+        try (PreparedStatement preparedStatement=connection.prepareStatement(sql)){
+            preparedStatement.setLong(1,livre.getId());
+            ResultSet resultSet=preparedStatement.executeQuery();
+            if(resultSet.next()){
+                Emprunt emprunt=new Emprunt();
+                emprunt.mapData(resultSet);
+                return emprunt;
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+            return null;
+        }
+        return null;
+    }
 
+    public boolean delete(Long id)throws SQLException{
+
+        String deleteLivreEmprunt="Delete from LivreEmprunt where livre_id=?";
+        try( PreparedStatement preparedStatementS = connection.prepareStatement(deleteLivreEmprunt)){
+            preparedStatementS.setLong(1,id);
+
+            int rowDeleted=preparedStatementS.executeUpdate();
+            return rowDeleted > 0;
+        }
+    }
+
+    public Integer checkCount(Long id){
+        String sql="Select count(*) from livreemprunt where emprunt_id=?";
+        try(PreparedStatement preparedStatement=connection.prepareStatement(sql)){
+            preparedStatement.setLong(1,id);
+            ResultSet resultSet=preparedStatement.executeQuery();
+            if(resultSet.next()) {
+                return resultSet.getInt("count");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        return 0;
+    }
 
 }

@@ -8,9 +8,8 @@ import java.sql.SQLException;
 
 public class CollectionService {
 
-    private CollectionRepository collectionRepository;
+     CollectionRepository collectionRepository = new CollectionRepository();
 
-    public CollectionService(CollectionRepository collectionRepository){this.collectionRepository = collectionRepository;}
 
     private Collection collection = new Collection();
 
@@ -28,4 +27,29 @@ public class CollectionService {
             System.out.println("+-------------------+-----------------+");
         }
     }
+
+    public String AddCollection(){
+        if (collectionRepository.addCollection()) {
+            return "Collection added successfully.";
+        } else {
+            return  "Failed to add collection.";
+        }
+    }
+
+    public String UpdateCollection(String isbn){
+        if (collectionRepository.collectionExists(isbn)>0){
+             collectionRepository.updateCollection(isbn);
+             return "Collection updated successufully";
+        }else {
+            return "ERROR";
+        }
+    }
+
+
+
+
+
+
+
+
 }

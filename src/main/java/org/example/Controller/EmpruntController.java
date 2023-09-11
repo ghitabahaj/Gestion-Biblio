@@ -51,8 +51,20 @@ public class EmpruntController {
                 System.out.println("   Livre Auteur: " + collection.getAuteur());
             }
 
-            System.out.println();
+            System.out.println("---------------------------------------");
         }
+    }
+
+
+    public void Returned() throws SQLException {
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Entrez le numero d'inventaire:");
+        String numLivre = scanner.next();
+
+         String message = empruntService.returne(numLivre);
+         System.out.println(message);
     }
 
 }

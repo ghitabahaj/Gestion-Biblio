@@ -4,11 +4,7 @@ import org.example.Repository.LivreRepository;
 
 public class LivreService {
 
-    private LivreRepository livreRepository;
-
-    public LivreService(LivreRepository livreRepository){this.livreRepository = livreRepository;}
-
-
+  LivreRepository livreRepository = new LivreRepository();
 
     public boolean AddBook(String num){
         if(livreRepository.checkIfBookExistsByNUM(num) ){
@@ -20,11 +16,12 @@ public class LivreService {
             return true;
         }
     }
-    public void DisplayBook(String title){
+    public String DisplayBook(String title){
          if(livreRepository.findBookByTitle(title)!=null){
              livreRepository.displayBookByTitle(title);
+             return "Done";
          }else{
-             System.out.println("Un Livre avec Ce Titre :" + title + "  n'existe pas!!!!!!!");
+            return "Un Livre avec Ce Titre :" + title + "  n'existe pas!!!!!!!";
          }
     }
 
@@ -33,11 +30,11 @@ public class LivreService {
     }
 
 
-    public void DeleteBook(String numLivre){
+    public String DeleteBook(String numLivre){
         if(livreRepository.DeleteBook(numLivre)){
-            System.out.println("Book Deleted Successfully\n");
+            return "Book Deleted Successfully";
         }else {
-            System.out.println("Failed to delete the book");
+           return "Failed to delete the book";
         }
     }
 

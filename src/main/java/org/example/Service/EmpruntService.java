@@ -102,15 +102,6 @@ public class EmpruntService {
 
 
 
-
-
-    public String returne(Long id)throws  SQLException{
-        if(empruntRepository.update(true,id)){
-            return "the book has been returned successfully";
-        }
-        return "an error accured while changing the returne";
-    }
-
     public List<Emprunt> findAll()throws  SQLException{
         List<Emprunt> emprunts=empruntRepository.findByAll();
         if(emprunts.size()==0){
@@ -126,5 +117,27 @@ public class EmpruntService {
         }
         return null;
     }
+
+
+    public String returne(String numeroInventair)throws  SQLException{
+        Livre livre=livreRepository.findNumInventaire(numeroInventair);
+        if(livre!=null){
+            Emprunt emprunt=empruntRepository.findEmpruntLivre(livre);
+            if(emprunt!=null){
+                empruntRepository.delete(livre.getId());
+                if(empruntRepository.checkCount(emprunt.getId())==0){
+                    empruntRepository.update(emprunt.getId());
+                    return "the emprunt has been updated successfully";
+                }
+                return "book with numeroInventair :"+numeroInventair+"has been returned successfully";
+            }
+            return "emprunt of this book doesn't exist";
+        }
+        return "this book doesn't exist";
+    }
+
+
+
+
 }
 

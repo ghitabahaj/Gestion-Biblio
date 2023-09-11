@@ -16,6 +16,26 @@ public class CollectionRepository {
 
     private Scanner scanner;
 
+
+
+
+    public boolean AjouterCollection(Collection collection){
+        String addCollectionQuery = "INSERT INTO Collection (isbn, title, auteur, totale) VALUES (?, ?, ?, ?)";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(addCollectionQuery)) {
+            pstmt.setString(1, collection.getIsbn());
+            pstmt.setString(2, collection.getTitre());
+            pstmt.setString(3, collection.getAuteur());
+            pstmt.setInt(4, 0);
+
+            int rowsInserted = pstmt.executeUpdate();
+            return rowsInserted > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+    }
     public boolean addCollection() {
         scanner = new Scanner(System.in);
         System.out.print("Enter ISBN: ");
@@ -43,6 +63,9 @@ public class CollectionRepository {
         }
 
     }
+
+
+
     public Collection getCollectionById(long collectionId) {
         String getCollectionQuery = "SELECT * FROM Collection WHERE id = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(getCollectionQuery)) {
@@ -101,15 +124,7 @@ public class CollectionRepository {
         }
     }
 
-    public boolean updateCollection() {
-        scanner = new Scanner(System.in);
-        System.out.print("Enter ISBN of the collection you want to update: ");
-        String isbn = scanner.next();
-        System.out.println(collectionExists(isbn));
-        if (collectionExists(isbn)==0) {
-            System.out.println("Collection with ISBN " + isbn + " does not exist.");
-            return false;
-        }else {
+    public boolean updateCollection(String isbn) {
 
             System.out.println("Provide updated information for the collection:");
             System.out.print("Enter new title: ");
@@ -140,11 +155,8 @@ public class CollectionRepository {
                 return false;
 
             }
-        }
+
     }
-
-
-
 
 
 }
