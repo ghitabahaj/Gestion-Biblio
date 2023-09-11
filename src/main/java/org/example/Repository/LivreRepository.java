@@ -1,16 +1,15 @@
 package org.example.Repository;
 
 import org.example.Helpers.DbFunctions;
+import org.example.Model.*;
 import org.example.Model.Collection;
-import org.example.Model.Livre;
-import org.example.Model.Status;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class LivreRepository {
 
@@ -73,6 +72,35 @@ public class LivreRepository {
             return null;
         }
 
+    }
+
+    public Livre findNumInventaire(String numInventaire) {
+        String query = "SELECT * FROM Livre WHERE numeroinventair = ?";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, numInventaire);
+
+            ResultSet resultSet = pstmt.executeQuery();
+
+            if (resultSet.next()) {
+                // Retrieve the data from the ResultSet and create a Livre object
+                long id = resultSet.getLong("id");
+                String numeroInventaire = resultSet.getString("numeroinventair");
+
+                long collectionId = resultSet.getLong("collection_id");
+                long statusId = resultSet.getLong("status_id");
+
+                // Create a Book object and return it
+                Collection collection = collectionRepository.getCollectionById(collectionId);
+                Status status = statusRepository.getStatusById(statusId);
+                return new Livre(id, numeroInventaire,collection,status);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Return null if no matching Livre is found
+        return null;
     }
 
     public void displayBookByTitle(String title) {
@@ -207,6 +235,100 @@ public class LivreRepository {
             }
         }
     }
+
+
+    public Livre findById(Long id)throws SQLException{
+        String IdLivreQuery="Select * from Livre l Join collection c on l.collection_id=c.id where id=?";
+        try(PreparedStatement preparedStatement=connection.prepareStatement(IdLivreQuery)){
+            preparedStatement.setLong(1,id);
+
+            ResultSet resultSet=preparedStatement.executeQuery();
+            if(resultSet.next()){
+                Livre livre=new Livre();
+                livre.setId(resultSet.getLong("id"));
+                livre.mapData(resultSet);
+                return livre;
+            }
+        }
+        return null;
+    }
+
+
+    public void displayBorrowedBooksInfo() {
+        try {
+            String query = "SELECT livreemprunt.*, livre.*, emprunteur.*, emprunt.*, collection.title AS book_title FROM livreemprunt INNER JOIN livre ON livreemprunt.livre_id = livre.id INNER JOIN emprunt ON livreemprunt.emprunt_id = emprunt.id INNER JOIN emprunteur ON emprunt.emprunteur_id = emprunteur.id INNER JOIN collection ON livre.collection_id = collection.id WHERE livre.status_id = 2";
+
+            try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+                ResultSet resultSet = pstmt.executeQuery();
+                List<String> borrowedBooksInfo = new ArrayList<>();
+
+                System.out.println("+---------------------------------------------------------------------------------------------------------------------------------------------+");
+                System.out.println("| Borrowed Books Information                                                                                                                 |");
+                System.out.println("+---------------------------------------------------------------------------------------------------------------------------------------------+");
+                System.out.println("| Book Title             | Borrower Name   | Start Date | End Date   | Returned       | Emprunteur Email | Emprunteur Phone |");
+                System.out.println("+------------------------|-----------------|------------|------------|----------------|------------------|-------------------|");
+
+                while (resultSet.next()) {
+                    String bookTitle = resultSet.getString("book_title");
+                    String borrowerName = resultSet.getString("fullname");
+                    Date startDate = resultSet.getDate("startdate");
+                    Date endDate = resultSet.getDate("enddate");
+                    boolean isReturned = resultSet.getBoolean("returne");;
+                    String emprunteurEmail = resultSet.getString("email");
+                    String emprunteurPhone = resultSet.getString("phone");
+
+                    // Format the dates
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    String formattedStartDate = dateFormat.format(startDate);
+                    String formattedEndDate = dateFormat.format(endDate);
+
+                    // Format the returned status
+                    String returnedStatus = isReturned ? "Yes" : "No";
+
+                    // Print row in tabular format
+                    System.out.printf("| %-22s | %-15s | %-10s | %-10s | %-14s | %-16s | %-15s |\n",
+                            bookTitle, borrowerName, formattedStartDate, formattedEndDate, returnedStatus,emprunteurEmail, emprunteurPhone);
+                }
+
+                System.out.println("+---------------------------------------------------------------------------------------------------------------------------------------------+");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void displayBookStatistics() {
+        try {
+            String query = "SELECT (SELECT COUNT(*) FROM livre WHERE status_id = (SELECT id FROM status WHERE label = 'Perdu')) AS perdus," +
+                    "(SELECT COUNT(*) FROM livre WHERE status_id = (SELECT id FROM status WHERE label = 'Emprunte')) AS empruntes," +
+                    "(SELECT COUNT(*) FROM livre WHERE status_id = (SELECT id FROM status WHERE label = 'Disponible')) AS disponibles";
+
+            try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+                ResultSet resultSet = pstmt.executeQuery();
+
+                if (resultSet.next()) {
+                    int livresPerdus = resultSet.getInt("perdus");
+                    int livresEmpruntes = resultSet.getInt("empruntes");
+                    int livresDisponibles = resultSet.getInt("disponibles");
+
+                    System.out.println("Statistiques des livres :");
+                    System.out.println("+-------------------+-------------------+-------------------+");
+                    System.out.println("| Livres Perdus     | Livres Empruntés  | Livres Disponibles|");
+                    System.out.println("+-------------------+-------------------+-------------------+");
+                    System.out.printf("| %-17d | %-17d | %-17d |\n", livresPerdus, livresEmpruntes, livresDisponibles);
+                    System.out.println("+-------------------+-------------------+-------------------+");
+
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+
 }
 
 

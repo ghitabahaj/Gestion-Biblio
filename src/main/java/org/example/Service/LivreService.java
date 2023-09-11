@@ -42,4 +42,8 @@ public class LivreService {
     }
 
 
+    public void DisplayBooksBorrowed(){
+        livreRepository.displayBorrowedBooksInfo();
+    }
+
 }

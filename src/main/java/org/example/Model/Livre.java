@@ -36,7 +36,7 @@ public class Livre {
         return Id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         Id = id;
     }
 

@@ -25,6 +25,8 @@ public class Emprunt {
         this.emprunteur = emprunteur;
     }
 
+    public Emprunt(){}
+
     public long getId() {
         return Id;
     }

@@ -1,4 +1,5 @@
 package org.example.Helpers;
+import org.example.Controller.EmpruntController;
 import org.example.Controller.EmprunteurController;
 import org.example.Model.Collection;
 import org.example.Model.Livre;
@@ -6,6 +7,7 @@ import org.example.Repository.CollectionRepository;
 import org.example.Repository.LivreRepository;
 import org.example.Repository.StatusRepository;
 import org.example.Service.CollectionService;
+import org.example.Service.EmpruntService;
 import org.example.Service.LivreService;
 import org.example.Service.StatusService;
 
@@ -27,6 +29,10 @@ public class LibraryMenu {
     StatusService statusService = new StatusService(statusRepository);
 
     EmprunteurController emprunteurController = new EmprunteurController();
+
+    EmpruntController empruntController = new EmpruntController();
+
+    EmpruntService empruntService = new EmpruntService();
 
     public LibraryMenu() {
         scanner = new Scanner(System.in);
@@ -56,7 +62,8 @@ public class LibraryMenu {
             System.out.println("14. Afficher Les Livres Empruntés et Les Informations d'Emprunteur ");
             System.out.println("15. Ajouter Un Nouveau Status");
             System.out.println("16. Afficher Les Statistiques");
-            System.out.println("17. Exit");
+            System.out.println("17. Retourner Un Livre");
+            System.out.println("18. Exit");
 
             System.out.print("Enter your choice: ");
 
@@ -126,9 +133,11 @@ public class LibraryMenu {
                         break;
                     case 13:
                         System.out.print("------------ Emprunter Un Livre ------------\n ");
+                       empruntController.addEmprunt();
                         break;
                     case 14:
                         System.out.print("---------- Affichage Des Livres Empruntés avec Les informations des Emprunteurs ----------\n ");
+                        livreService.DisplayBooksBorrowed();
                         break;
                     case 15:
                         System.out.print("--------- Ajout d'un nouveau Status --------- \n");
@@ -139,8 +148,12 @@ public class LibraryMenu {
                         break;
                     case 16:
                         System.out.print("-------- L'affichage des statistiques -----------\n");
+                        livreRepository.displayBookStatistics();
                         break;
                     case 17:
+                        System.out.print("-------- Retourner Un Livre -----------\n");
+                        break;
+                    case 18:
                         exit = true;
                         break;
                     default:
