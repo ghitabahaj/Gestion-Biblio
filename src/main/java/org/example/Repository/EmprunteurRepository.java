@@ -34,19 +34,28 @@ public class EmprunteurRepository {
     }
 
     public boolean updateEmprunteur(Emprunteur emprunteur) throws SQLException {
-        String updateEmprunteurQuery = "UPDATE Emprunteur Set membreship=?, fullname=?, email=?, phone=? WHERE id=? ";
+        String updateEmprunteurQuery = "UPDATE Emprunteur Set  fullname=?, email=?, phone=? WHERE membreship=?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(updateEmprunteurQuery)) {
-            preparedStatement.setString(1, emprunteur.getMembership());
-            preparedStatement.setString(2,emprunteur.getNom());
-            preparedStatement.setString(3, emprunteur.getEmail());
-            preparedStatement.setString(4, emprunteur.getTelephone());
-            preparedStatement.setLong(5, emprunteur.getId());
 
+            preparedStatement.setString(1,emprunteur.getNom());
+            preparedStatement.setString(2, emprunteur.getEmail());
+            preparedStatement.setString(3, emprunteur.getTelephone());
+            preparedStatement.setString(4, emprunteur.getMembership());
             int rowsUpdated = preparedStatement.executeUpdate();
             return rowsUpdated > 0;
         }
     }
 
+    private Emprunteur createNewEmprunteur(String name , String adresss , String Phone) {
+        Scanner scanner = new Scanner(System.in);
+
+        Emprunteur emprunteur = new Emprunteur();
+        emprunteur.setNom(name);
+        emprunteur.setEmail(adresss);
+        emprunteur.setTelephone(Phone);
+
+        return emprunteur;
+    }
     public List<Emprunteur> findAll() throws SQLException{
 
         List<Emprunteur> emprunteurs=new ArrayList<>();

@@ -33,19 +33,7 @@ public class Collection {
         Isbn = isbn;
         Auteur = auteur;
     }
-    public void get(){
-        String query = "SELECT *  FROM collection WHERE isbn = ? ";
-        try {
-            PreparedStatement prst = connection.prepareStatement(query);
-            prst.setString(1,this.Isbn);
-            ResultSet resultSet = prst.executeQuery();
-            while (resultSet.next()){
-                this.Id = resultSet.getLong("id");
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+
     public Collection(){}
     public Collection(String isbn){
         Isbn = isbn;

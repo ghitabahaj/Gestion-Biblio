@@ -8,6 +8,7 @@ import org.example.Model.Livre;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class EmpruntRepository {
     DbFunctions database = new DbFunctions();
@@ -49,6 +50,9 @@ public class EmpruntRepository {
         }
         return false;
     }
+
+
+
 
 
 
@@ -168,6 +172,21 @@ public class EmpruntRepository {
             return 0;
         }
         return 0;
+    }
+
+    public Integer findByEmprunteur(Emprunt emprunt){
+        String sql="Select count(*) emprunt where emprunteur_id=? And returne=false";
+        try(PreparedStatement preparedStatement=connection.prepareStatement(sql)){
+            preparedStatement.setLong(1,emprunt.getEmprunteur().getId());
+            ResultSet resultSet=preparedStatement.executeQuery();
+            if(resultSet.next()){
+                return resultSet.getInt("count");
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+            return null;
+        }
+        return null;
     }
 
 }

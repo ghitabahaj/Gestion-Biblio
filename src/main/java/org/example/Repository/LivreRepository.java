@@ -157,7 +157,18 @@ public class LivreRepository {
                 // Create the new collection
                 Collection newCollection = new Collection(newCollectionTitle, isbn, newCollectionAuthor);
                 collectionRepository.AjouterCollection(newCollection);
-                newCollection.get();
+
+                String query = "SELECT *  FROM collection WHERE isbn = ? ";
+                try {
+                    PreparedStatement prst = connection.prepareStatement(query);
+                    prst.setString(1,newCollection.getIsbn());
+                    ResultSet resultSet = prst.executeQuery();
+                    while (resultSet.next()){
+                        newCollection.setId(resultSet.getLong("id"));
+                    }
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
                 // Set the created collection as the current collection
                 collectionA = newCollection;
             }
@@ -236,26 +247,42 @@ public class LivreRepository {
             return null; // Return null in case of an error
         }
     }
+/*
+    public List<Livre> getBycollection(long collectionId){
+       String Query = "SELECT * FROM livre JOIN collection ON livre.collection_id = collection.id WHERE collection_id = ?";
 
+       List<Livre> livres = new ArrayList<>();
 
+       try( PreparedStatement st = connection.prepareStatement(Query)){
+           st.setLong(1,collectionId);
 
-    public boolean DeleteBook(String numLivre) {
-        if (CheckIfBorrowed(numLivre)!= null) {
-            System.out.println("This book is already borrowed and cannot be deleted.");
+           ResultSet resultSet = st.executeQuery();
+
+           if(resultSet.next()){
+            Livre livre = new Livre();
+            livre.mapData(resultSet);
+            livres.add(livre);
+           }
+       } catch (SQLException e) {
+           throw new RuntimeException(e);
+       }
+        return livres;
+    }*/
+
+    public boolean DeleteLivre(String NumLivre){
+        String DeleteBookQuery = "DELETE FROM Livre WHERE numeroinventair = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(DeleteBookQuery)) {
+            pstmt.setString(1, NumLivre);
+            int rowsDeleted = pstmt.executeUpdate();
+
+            return rowsDeleted > 0; // Returns true if at least one row was deleted, indicating success
+
+        } catch (SQLException e) {
+            e.printStackTrace();
             return false;
-        }else {
-
-            String DeleteBookQuery = "DELETE FROM Livre WHERE numeroinventair = ?";
-            try (PreparedStatement pstmt = connection.prepareStatement(DeleteBookQuery)) {
-                pstmt.setString(1, numLivre);
-                int rowsDeleted = pstmt.executeUpdate();
-                return rowsDeleted > 0; // Returns true if at least one row was deleted, indicating success
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return false;
-            }
         }
     }
+
 
 
     public Livre findById(Long id)throws SQLException{

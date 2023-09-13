@@ -5,6 +5,7 @@ import org.example.Model.Emprunt;
 import org.example.Model.Emprunteur;
 import org.example.Model.Livre;
 import org.example.Service.EmpruntService;
+import org.example.Service.EmprunteurService;
 
 import java.util.Date;
 import java.sql.SQLException;
@@ -18,14 +19,77 @@ public class EmpruntController {
 
 
     EmpruntService empruntService = new EmpruntService();
+    EmprunteurService emprunteurService = new EmprunteurService();
 
+    EmprunteurController emprunteurController = new EmprunteurController();
 
-
+    Scanner scanner = new Scanner(System.in);
     public void addEmprunt() throws SQLException {
 
-        String message = empruntService.addEmprunt();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        List<String> data = new ArrayList<>();
+        int exit = 1;
+        String member = null;
+        Emprunteur emprunteur = null;
 
-        System.out.println(message);
+        while (exit != 0 && exit!=2) {
+            System.out.print("Enter Emprunteur memberShip : ");
+            member = scanner.next();
+            emprunteur = emprunteurService.findByMemberShip(member);
+
+            if (emprunteur == null) {
+                System.out.println("This emprunteur doesn't exist");
+                System.out.println("Choose an option:");
+                System.out.println("1. Re-enter the membership of the borrower");
+                System.out.println("2. Create a new borrower");
+                System.out.println("3. Exit");
+                int choice = scanner.nextInt();
+
+                switch (choice) {
+                    case 1:
+                        break;
+                    case 2:
+                        emprunteurController.save();
+                        emprunteur = emprunteurService.findByMemberShip(member);
+                        exit=2;
+                        break;
+                    case 3:
+                        System.out.println("Exiting.");
+                        exit = 0; // Set the exit flag to true
+                        break;
+                    default:
+                        System.out.println("Invalid choice. Exiting.");
+                        exit = 0; // Set the exit flag to true
+                        break;
+                }
+            } else {
+                exit = 2;
+            }
+        }
+        if (exit == 0)  {
+            return ;
+        }
+        System.out.print("Enter End date (YYYY-MM-DD): ");
+        String EndDate = scanner.next();
+        emprunteur.setMembership(member);
+
+        System.out.print("Enter the number of livres empruntes by the emprunteur: ");
+        Integer n = scanner.nextInt();
+
+        for (int i = 0; i < n; i++) {
+            System.out.print("Enter the numero d'inventaire of " + (i + 1) + " livre: ");
+            String id = scanner.next();
+            data.add(id);
+        }
+        try {
+            Emprunt emprunt = new Emprunt(new Date(),dateFormat.parse(EndDate),false,emprunteur);
+            System.out.print(empruntService.addEmprunt(emprunt, data) + "\n");
+        } catch (ParseException | SQLException e) {
+            e.printStackTrace();
+            System.out.print("The save operation of emprunt failed.\n");
+        }
+
+
     }
 
 
@@ -58,7 +122,7 @@ public class EmpruntController {
 
     public void Returned() throws SQLException {
 
-        Scanner scanner = new Scanner(System.in);
+
 
         System.out.println("Entrez le numero d'inventaire:");
         String numLivre = scanner.next();

@@ -20,13 +20,13 @@ public class CollectionRepository {
 
 
     public boolean AjouterCollection(Collection collection){
-        String addCollectionQuery = "INSERT INTO Collection (isbn, title, auteur, totale) VALUES (?, ?, ?, ?)";
+        String addCollectionQuery = "INSERT INTO Collection (isbn, title, auteur) VALUES (?, ?, ?)";
 
         try (PreparedStatement pstmt = connection.prepareStatement(addCollectionQuery)) {
+
             pstmt.setString(1, collection.getIsbn());
             pstmt.setString(2, collection.getTitre());
             pstmt.setString(3, collection.getAuteur());
-            pstmt.setInt(4, 0);
 
             int rowsInserted = pstmt.executeUpdate();
             return rowsInserted > 0;
@@ -158,5 +158,19 @@ public class CollectionRepository {
 
     }
 
+    public boolean DeleteCollection(long collectionId){
+       String  Query = "DELETE FROM collection WHERE id = ? ";
+
+       try(PreparedStatement pstmt = connection.prepareStatement(Query)){
+           pstmt.setLong(1,collectionId);
+
+           int rowsDeleted = pstmt.executeUpdate();
+
+           return   rowsDeleted > 0;
+       } catch (SQLException e) {
+           e.printStackTrace();
+           return false;
+       }
+    }
 
 }

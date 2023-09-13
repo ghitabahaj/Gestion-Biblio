@@ -73,15 +73,15 @@ public class EmprunteurService {
         }
     }
 
-    public boolean deleteByMembership(String membership) throws SQLException {
+    public String deleteByMembership(String membership) throws SQLException {
 
         if (emprunteurRepository.emprunteurExists(membership)== 0) {
-            System.out.println("Emprunteur with membership " + membership + " does not exists.");
-            return false;
+            return "Emprunteur with membership " + membership + " does not exists.";
+
 
         }else{
             emprunteurRepository.deleteByMembership(membership);
-            return true;
+            return "Emprunteur Deleted Successufully";
         }
 
     }

@@ -27,6 +27,13 @@ public class Emprunt {
 
     public Emprunt(){}
 
+    public Emprunt(Date date, Date parse, boolean b, Emprunteur emprunteur) {
+        DateDebut = date;
+        DateRetour = parse ;
+        RetourLivre = b;
+        this.emprunteur = emprunteur;
+    }
+
     public long getId() {
         return Id;
     }

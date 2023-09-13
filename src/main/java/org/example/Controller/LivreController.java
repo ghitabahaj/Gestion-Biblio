@@ -19,7 +19,7 @@ public class LivreController {
 
         System.out.println("Entrez le numéro d'inventaire:");
         String numLivre = scanner.next();
-        System.out.println(livreService.DeleteBook(numLivre));
+        System.out.println(livreService.DeleteBookC(numLivre));
     }
 
     public void DisplayByTitle(){

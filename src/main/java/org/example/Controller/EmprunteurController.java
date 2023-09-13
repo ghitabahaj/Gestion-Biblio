@@ -49,8 +49,7 @@ public class EmprunteurController {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter MemberShip number: ");
         String membership = scanner.next();
-        if (emprunteurService.findByMemberShip(membership) != null) {
-            System.out.print("Enter fullNumber: ");
+            System.out.print("Enter full Name: ");
             String fullName = scanner.next();
             System.out.print("Enter Email: ");
             String email = scanner.next();
@@ -58,18 +57,15 @@ public class EmprunteurController {
             String phone = scanner.next();
             Emprunteur emprunteur = new Emprunteur(fullName, email, phone,membership);
             System.out.println(emprunteurService.update(emprunteur));
-        }
+
 
     }
 
-    public String delete() throws SQLException {
+    public void delete() throws SQLException {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter MemberShip number: ");
         String membership = scanner.next();
-       if(emprunteurService.deleteByMembership(membership)){
-           return " Emprunteur Deleted successufully";
-       }else{
-           return "An error occured try again";
-       }
+        System.out.println(emprunteurService.deleteByMembership(membership));
+
     }
 }
